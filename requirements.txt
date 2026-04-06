@@ -1,0 +1,3 @@
+requests>=2.32.0
+playwright>=1.58.0
+undetected-playwright>=0.3.0

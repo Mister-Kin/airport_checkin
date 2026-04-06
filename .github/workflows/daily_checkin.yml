@@ -1,0 +1,38 @@
+name: "Common Airport Checkin"
+
+on:
+  schedule:
+    - cron: "0 22 * * *"  # scheduled at 06:00 (UTC+8) everyday
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Random sleep
+        if: github.event_name == 'schedule'
+        run: sleep $(shuf -i 10-300 -n 1)
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium
+
+      - name: Run checkin
+        env:
+          URL: ${{ secrets.URL }}
+          CONFIG: ${{ secrets.CONFIG }}
+          SENDKEY: ${{ secrets.SENDKEY }}
+        run: |
+          python3 ./main.py
